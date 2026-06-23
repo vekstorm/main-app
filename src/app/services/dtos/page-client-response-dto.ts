@@ -13,15 +13,15 @@ import { SortObject } from './sort-object';
 
 
 export interface PageClientResponseDto { 
-    totalPages?: number;
     totalElements?: number;
+    totalPages?: number;
     size?: number;
     content?: Array<ClientResponseDto>;
     number?: number;
     sort?: SortObject;
-    numberOfElements?: number;
     first?: boolean;
     last?: boolean;
+    numberOfElements?: number;
     pageable?: PageableObject;
     empty?: boolean;
 }

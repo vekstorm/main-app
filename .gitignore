@@ -49,3 +49,5 @@ Thumbs.db
 .vscode
 /src/app/generated/auth-api/api/
 /src/app/generated/auth-api/model/
+/src/app/generated/subscription-api/api/
+/src/app/generated/subscription-api/model/

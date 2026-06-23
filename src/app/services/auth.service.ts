@@ -3,6 +3,9 @@ import { Router } from '@angular/router';
 import { APP_CONFIG } from '../core/app-config.token';
 import { getStoredCodeVerifier, clearCodeVerifier } from '../core/pkce';
 import { ApiService } from './api.service';
+import { firstValueFrom } from 'rxjs';
+import { SubscriptionControllerService } from './subscription-controller.service';
+import { SubscriptionUsersControllerService } from './subscription-users-controller.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -10,10 +13,15 @@ export class AuthService {
   private config = inject(APP_CONFIG);
   private api = inject(ApiService);
   private router = inject(Router);
+  private subscriptionApiService = inject(SubscriptionControllerService);
+  private subscriptionUsersApiService = inject(SubscriptionUsersControllerService);
 
   private _isAuthenticated = signal<boolean>(this.hasValidToken());
   readonly isAuthenticatedSignal = this._isAuthenticated.asReadonly();
   private _hasAuthority = signal<boolean>(false);
+
+  private _subscriptionName = signal<string | null>(null);
+  readonly subscriptionNameSignal = this._subscriptionName.asReadonly();
 
   isAuthenticated() {
     return this._isAuthenticated();
@@ -27,6 +35,48 @@ export class AuthService {
     const authorities = parsed?.['authorities'];
 
     return Array.isArray(authorities) && authorities.includes(authority);
+  }
+
+  async initSubscription(userId: string, email: string): Promise<void> {
+    try {
+      const userSubs = await firstValueFrom(
+        this.subscriptionUsersApiService.getAll1({ userId })
+      );
+
+      if (userSubs && userSubs.length > 0) {
+        const sub = await firstValueFrom(
+          this.subscriptionApiService.getById({ id: userSubs[0].subscriptionId! })
+        );
+        this._subscriptionName.set(sub.subscriptionName ?? null);
+      } else {
+        const emailUsername = email.split('@')[0];
+        const randomId = crypto.randomUUID().split('-')[0];
+        const subscriptionName = `${emailUsername}_${randomId}_subscription`;
+
+        const newSub = await firstValueFrom(
+          this.subscriptionApiService.create({
+            subscription: {
+              subscriptionName,
+              type: 'BASIC_ACCESS',
+              enabled: true,
+            }
+          })
+        );
+
+        await firstValueFrom(
+          this.subscriptionUsersApiService.create1({
+            subscriptionUsers: {
+              subscriptionId: newSub.id,
+              userId,
+            }
+          })
+        );
+
+        this._subscriptionName.set(newSub.subscriptionName ?? null);
+      }
+    } catch (err) {
+      console.error('Failed to initialize subscription:', err);
+    }
   }
 
   setAccessToken(access_token: string) {

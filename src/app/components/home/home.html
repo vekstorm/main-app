@@ -24,6 +24,9 @@
         <div class="profile-bar__info">
           <span class="profile-bar__name">{{ u.name || u.username || 'User' }}</span>
           <span class="profile-bar__email">{{ u.email }}</span>
+          @if (authService.subscriptionNameSignal(); as subName) {
+            <span class="profile-bar__subscription">{{ subName }}</span>
+          }
         </div>
       </div>
     </section>

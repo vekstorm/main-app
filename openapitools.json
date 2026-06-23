@@ -15,6 +15,18 @@
           "useSingleRequestParameter": "true",
           "supportsES6": "true"
         }
+      },
+      "subscription-api": {
+        "generatorName": "typescript-angular",
+        "inputSpec": "http://localhost:8082/api-docs",
+        "output": "src/app/generated/subscription-api",
+        "additionalProperties": {
+          "providedInRoot": "true",
+          "fileNaming": "kebab-case",
+          "withInterfaces": "true",
+          "useSingleRequestParameter": "true",
+          "supportsES6": "true"
+        }
       }
     }
   }

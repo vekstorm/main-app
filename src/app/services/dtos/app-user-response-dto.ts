@@ -26,9 +26,9 @@ export interface AppUserResponseDto {
     roles?: Set<string>;
     createdAt?: string;
     updatedAt?: string;
-    google?: boolean;
-    facebook?: boolean;
-    gitHub?: boolean;
     microsoft?: boolean;
+    facebook?: boolean;
+    google?: boolean;
+    gitHub?: boolean;
 }
 

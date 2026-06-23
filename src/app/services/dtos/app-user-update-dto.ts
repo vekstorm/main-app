@@ -24,9 +24,9 @@ export interface AppUserUpdateDto {
     credentialsExpired?: boolean;
     disabled?: boolean;
     roles?: Set<string>;
-    google?: boolean;
-    facebook?: boolean;
-    gitHub?: boolean;
     microsoft?: boolean;
+    facebook?: boolean;
+    google?: boolean;
+    gitHub?: boolean;
 }
 

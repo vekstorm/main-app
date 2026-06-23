@@ -54,6 +54,9 @@ export class Home {
       next: (u) => {
         this.user.set(u);
         this.loading.set(false);
+        if (u.id && u.email) {
+          this.authService.initSubscription(u.id, u.email);
+        }
       },
       error: (err) => {
         this.error.set(err?.message ?? 'Error loading user');

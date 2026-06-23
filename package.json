@@ -10,7 +10,10 @@
     "generate:client": "openapi-generator-cli generate --generator-key auth-api",
     "postgenerate:client": "node scripts/post-generate.mjs",
     "generate:client:local": "openapi-generator-cli generate -g typescript-angular -i spec/openapi.json -o src/app/generated/auth-api --additional-properties=providedInRoot=true,fileNaming=kebab-case,withInterfaces=true,useSingleRequestParameter=true,supportsES6=true",
-    "download:spec": "node -e \"const fs=require('fs');const h='http';require(h).get('http://localhost:9000/api-docs',r=>{let d='';r.on('data',c=>d+=c);r.on('end',()=>{fs.mkdirSync('spec',{recursive:true});fs.writeFileSync('spec/openapi.json',d);console.log('Downloaded spec to spec/openapi.json')})})\""
+    "generate:client:subscription": "openapi-generator-cli generate --generator-key subscription-api && node scripts/post-generate-subscription.mjs",
+    "generate:client:subscription:local": "openapi-generator-cli generate -g typescript-angular -i spec/subscription.json -o src/app/generated/subscription-api --additional-properties=providedInRoot=true,fileNaming=kebab-case,withInterfaces=true,useSingleRequestParameter=true,supportsES6=true && node scripts/post-generate-subscription.mjs",
+    "download:spec": "node -e \"const fs=require('fs');const h='http';require(h).get('http://localhost:9000/api-docs',r=>{let d='';r.on('data',c=>d+=c);r.on('end',()=>{fs.mkdirSync('spec',{recursive:true});fs.writeFileSync('spec/openapi.json',d);console.log('Downloaded spec to spec/openapi.json')})})\"",
+    "download:spec:subscription": "node -e \"const fs=require('fs');const h='http';require(h).get('http://localhost:8082/api-docs',r=>{let d='';r.on('data',c=>d+=c);r.on('end',()=>{fs.mkdirSync('spec',{recursive:true});fs.writeFileSync('spec/subscription.json',d);console.log('Downloaded spec to spec/subscription.json')})})\""
   },
   "private": true,
   "packageManager": "npm@11.16.0",

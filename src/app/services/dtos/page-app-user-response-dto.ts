@@ -13,15 +13,15 @@ import { AppUserResponseDto } from './app-user-response-dto';
 
 
 export interface PageAppUserResponseDto { 
-    totalPages?: number;
     totalElements?: number;
+    totalPages?: number;
     size?: number;
     content?: Array<AppUserResponseDto>;
     number?: number;
     sort?: SortObject;
-    numberOfElements?: number;
     first?: boolean;
     last?: boolean;
+    numberOfElements?: number;
     pageable?: PageableObject;
     empty?: boolean;
 }

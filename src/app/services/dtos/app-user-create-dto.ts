@@ -21,9 +21,9 @@ export interface AppUserCreateDto {
     credentialsExpired?: boolean;
     disabled?: boolean;
     roles?: Array<string>;
-    google?: boolean;
-    facebook?: boolean;
-    gitHub?: boolean;
     microsoft?: boolean;
+    facebook?: boolean;
+    google?: boolean;
+    gitHub?: boolean;
 }
 
