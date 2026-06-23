@@ -1,5 +1,4 @@
 import { Component, signal, inject, effect } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { APP_CONFIG } from '../../core/app-config.token';
 import { generateCodeVerifier, generateCodeChallenge, storeCodeVerifier } from '../../core/pkce';
@@ -10,7 +9,6 @@ import { AppUserResponseDto } from '../../services/dtos/app-user-response-dto';
 
 @Component({
   selector: 'app-home',
-  imports: [DatePipe],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })

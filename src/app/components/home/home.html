@@ -1,142 +1,221 @@
-<header class="home-header">
-  <div class="logo-section">
-    <div class="logo-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-      </svg>
-    </div>
-    <div class="logo-text">
-      <h1>IoTizer</h1>
-      <p>IoT Devices Manager</p>
-    </div>
-  </div>
-</header>
-
 @if (authService.isAuthenticatedSignal()) {
   @let u = user();
   @let isLoading = loading();
   @let err = error();
 
   @if (isLoading) {
-    <div class="status-card">
-      <div class="status-content">
-        <h3>Loading user data...</h3>
-      </div>
-    </div>
+    <section class="hero hero--loading">
+      <div class="hero__inner"><p>Loading your profile…</p></div>
+    </section>
   } @else if (err) {
-    <div class="status-card">
-      <div class="status-content">
-        <h3>Error</h3>
-        <p>{{ err }}</p>
-      </div>
-    </div>
+    <section class="hero hero--error">
+      <div class="hero__inner"><p>{{ err }}</p></div>
+    </section>
   } @else if (u) {
-    <div class="profile-card">
-      <div class="profile-card-header">
-        <div class="profile-avatar">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+    <section class="profile-bar">
+      <div class="profile-bar__inner">
+        <div class="profile-bar__avatar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>
           </svg>
         </div>
-        <div class="profile-info">
-          <h2>{{ u.name || u.username || 'User' }}</h2>
-          <p class="profile-email">{{ u.email }}</p>
-          <span class="profile-badge">Authenticated</span>
+        <div class="profile-bar__info">
+          <span class="profile-bar__name">{{ u.name || u.username || 'User' }}</span>
+          <span class="profile-bar__email">{{ u.email }}</span>
         </div>
       </div>
-      <div class="profile-card-body">
-        <div class="profile-row">
-          <span class="profile-label">Username</span>
-          <span class="profile-value">{{ u.username }}</span>
+    </section>
+
+    <div class="home-container">
+      <div class="dash-grid">
+        <div class="dash-card" tabindex="0" role="button">
+          <div class="dash-card__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </div>
+          <h3 class="dash-card__title">Events &amp; Notifications</h3>
+          <p class="dash-card__desc">Real-time alerts and event logs from your IoT devices</p>
         </div>
-        <div class="profile-row">
-          <span class="profile-label">User ID</span>
-          <span class="profile-value mono">{{ u.id }}</span>
+
+        <div class="dash-card" tabindex="0" role="button">
+          <div class="dash-card__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+              <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+              <line x1="6" y1="6" x2="6.01" y2="6"></line>
+              <line x1="6" y1="18" x2="6.01" y2="18"></line>
+            </svg>
+          </div>
+          <h3 class="dash-card__title">Devices</h3>
+          <p class="dash-card__desc">Manage and monitor all connected IoT devices</p>
         </div>
-        @if (u.surname1 || u.surname2) {
-          <div class="profile-row">
-            <span class="profile-label">Surname</span>
-            <span class="profile-value">{{ u.surname1 }}{{ u.surname2 ? ' ' + u.surname2 : '' }}</span>
+
+        <div class="dash-card" tabindex="0" role="button">
+          <div class="dash-card__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"></polygon>
+              <line x1="12" y1="22" x2="12" y2="15.5"></line>
+              <polyline points="22 8.5 12 15.5 2 8.5"></polyline>
+            </svg>
           </div>
-        }
-        @if (u.phone) {
-          <div class="profile-row">
-            <span class="profile-label">Phone</span>
-            <span class="profile-value">{{ u.phone }}</span>
-          </div>
-        }
-        @if (u.address) {
-          <div class="profile-row">
-            <span class="profile-label">Address</span>
-            <span class="profile-value">{{ u.address }}</span>
-          </div>
-        }
-        <div class="profile-row">
-          <span class="profile-label">Status</span>
-          <span class="profile-value">
-            @if (u.disabled) {
-              <span class="status-tag disabled-tag">Disabled</span>
-            } @else {
-              <span class="status-tag active-tag">Active</span>
-            }
-            @if (u.locked) {
-              <span class="status-tag locked-tag">Locked</span>
-            }
-          </span>
+          <h3 class="dash-card__title">Scenarios</h3>
+          <p class="dash-card__desc">Create and run automation scenarios for your ecosystem</p>
         </div>
-        @if (u.roles) {
-          <div class="profile-row">
-            <span class="profile-label">Roles</span>
-            <span class="profile-value">
-              @for (role of u.roles; track $index) {
-                <span class="role-tag">{{ role }}</span>
-              }
-            </span>
+
+        <div class="dash-card" tabindex="0" role="button">
+          <div class="dash-card__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="23"></line>
+              <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
           </div>
-        }
-        @if (u.createdAt) {
-          <div class="profile-row">
-            <span class="profile-label">Created</span>
-            <span class="profile-value">{{ u.createdAt | date:'medium' }}</span>
+          <h3 class="dash-card__title">Subscription</h3>
+          <p class="dash-card__desc">Manage your plan, usage, and billing information</p>
+        </div>
+
+        <div class="dash-card" tabindex="0" role="button">
+          <div class="dash-card__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
           </div>
-        }
+          <h3 class="dash-card__title">Setup</h3>
+          <p class="dash-card__desc">Configure system preferences, integrations, and device settings</p>
+        </div>
+
+        <div class="dash-card" tabindex="0" role="button">
+          <div class="dash-card__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+          </div>
+          <h3 class="dash-card__title">Info</h3>
+          <p class="dash-card__desc">System status, documentation, and platform announcements</p>
+        </div>
       </div>
     </div>
   } @else {
-    <div class="status-card">
-      <div class="status-content">
-        <h3>Initializing...</h3>
-        <p>Setting up user session</p>
-      </div>
-    </div>
+    <section class="hero hero--idle">
+      <div class="hero__inner"><p>Initializing…</p></div>
+    </section>
   }
 } @else {
-  <div class="welcome-card">
-    <div class="welcome-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-      </svg>
+  <section class="hero hero--welcome">
+    <div class="hero__orbs" aria-hidden="true">
+      <div class="hero__orb hero__orb--1"></div>
+      <div class="hero__orb hero__orb--2"></div>
+      <div class="hero__orb hero__orb--3"></div>
     </div>
-    <h2>Welcome to IoTizer</h2>
-    <p>Sign in to manage your IoT devices and view your profile</p>
-    <button class="login-button" (click)="login()">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-        <polyline points="10 17 15 12 10 7"></polyline>
-        <line x1="15" y1="12" x2="3" y2="12"></line>
-      </svg>
-      Login with OAuth2
-    </button>
+    <div class="hero__inner">
+      <div class="hero__icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="6" width="16" height="12" rx="2"></rect>
+          <line x1="8" y1="4" x2="8" y2="6"></line>
+          <line x1="12" y1="4" x2="12" y2="6"></line>
+          <line x1="16" y1="4" x2="16" y2="6"></line>
+          <line x1="8" y1="18" x2="8" y2="20"></line>
+          <line x1="12" y1="18" x2="12" y2="20"></line>
+          <line x1="16" y1="18" x2="16" y2="20"></line>
+          <polygon points="14,7.5 8,13.5 11.5,13.5 10,17 17,10 13,10 15,7.5"></polygon>
+        </svg>
+      </div>
+      <h1 class="hero__title">Welcome to IoTizer</h1>
+      <p class="hero__subtitle">Your complete IoT management platform. Sign in to manage devices, configure alarms, and monitor your ecosystem in real time.</p>
+      <button class="hero__cta" (click)="login()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+          <polyline points="10 17 15 12 10 7"></polyline>
+          <line x1="15" y1="12" x2="3" y2="12"></line>
+        </svg>
+        Login with OAuth2
+      </button>
+    </div>
+  </section>
+
+  <div class="home-container">
+    <div class="section-label">
+      <h2>Explore IoTizer</h2>
+      <p>Discover everything you can do with your IoT platform</p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card" tabindex="0" role="button">
+        <div class="feature-card__icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+        <h3 class="feature-card__title">Get Started with IoTizer</h3>
+        <p class="feature-card__desc">Quick setup guide and step-by-step tutorials to connect your first device.</p>
+      </div>
+
+      <div class="feature-card" tabindex="0" role="button">
+        <div class="feature-card__icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+            <line x1="6" y1="6" x2="6.01" y2="6"></line>
+            <line x1="6" y1="18" x2="6.01" y2="18"></line>
+          </svg>
+        </div>
+        <h3 class="feature-card__title">IoT Devices Management</h3>
+        <p class="feature-card__desc">Register, configure, and monitor all your IoT devices from a single dashboard.</p>
+      </div>
+
+      <div class="feature-card" tabindex="0" role="button">
+        <div class="feature-card__icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+        </div>
+        <h3 class="feature-card__title">Remote Alarm Control</h3>
+        <p class="feature-card__desc">Set up alerts, receive push notifications, and take action remotely.</p>
+      </div>
+
+      <div class="feature-card" tabindex="0" role="button">
+        <div class="feature-card__icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          </svg>
+        </div>
+        <h3 class="feature-card__title">Tutorials &amp; Schematics</h3>
+        <p class="feature-card__desc">Access documentation, circuit diagrams, and wiring guides for your projects.</p>
+      </div>
+
+      <div class="feature-card" tabindex="0" role="button">
+        <div class="feature-card__icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+        </div>
+        <h3 class="feature-card__title">Event Monitoring</h3>
+        <p class="feature-card__desc">Track real-time events, view logs, and analyze device activity patterns.</p>
+      </div>
+    </div>
   </div>
 }
-
-<footer class="home-footer">
-  <p>IoTizer &mdash; IoT Manager by Vekstorm</p>
-</footer>
