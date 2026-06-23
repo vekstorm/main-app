@@ -1,0 +1,31 @@
+<div class="modal-overlay" (click)="close.emit()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ permission() ? 'Edit Permission' : 'Add Permission' }}</h3>
+      <button class="modal-close" (click)="close.emit()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="onSave()">
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Name *</label>
+          <input type="text" class="form-input" formControlName="name" />
+          @if (form.get('name')?.invalid && form.get('name')?.touched) {
+            <small class="error-text">Name is required</small>
+          }
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" class="form-input" formControlName="description" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="close.emit()">Cancel</button>
+        <button type="submit" class="btn-save">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
