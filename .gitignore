@@ -47,3 +47,5 @@ Thumbs.db
 
 /src/environments/environment.ts
 .vscode
+/src/app/generated/auth-api/api/
+/src/app/generated/auth-api/model/

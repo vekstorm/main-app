@@ -1,142 +1,142 @@
-<div class="home-container reveal delay-1">
-  <header class="home-header bar-sweep">
-    <div class="logo-section">
-      <div class="logo-icon glow-pulse">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-        </svg>
-      </div>
-      <div class="logo-text">
-        <h1 class="text-reveal">IoTizer</h1>
-        <p>IoT Devices Manager</p>
-      </div>
-    </div>
-    <div class="user-info">
-      <div class="user-avatar">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-          <circle cx="12" cy="7" r="4"></circle>
-        </svg>
-      </div>
-      <div class="user-details">
-        <span class="username">Welcome</span>
-        <span class="user-role">OAuth2 Client</span>
-      </div>
-    </div>
-  </header>
-
-  <div class="status-card reveal delay-2">
-    <div class="status-icon success">
-      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+<header class="home-header">
+  <div class="logo-section">
+    <div class="logo-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
       </svg>
     </div>
-    <div class="status-content">
-      <h3>Authorization Client Ready</h3>
-      <p>Connected to OAuth2 authorization server</p>
+    <div class="logo-text">
+      <h1>IoTizer</h1>
+      <p>IoT Devices Manager</p>
     </div>
   </div>
+</header>
 
-  <div class="content-grid">
-    <div class="info-card reveal delay-3">
-      <div class="card-header">
-        <div class="card-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+@if (authService.isAuthenticatedSignal()) {
+  @let u = user();
+  @let isLoading = loading();
+  @let err = error();
+
+  @if (isLoading) {
+    <div class="status-card">
+      <div class="status-content">
+        <h3>Loading user data...</h3>
+      </div>
+    </div>
+  } @else if (err) {
+    <div class="status-card">
+      <div class="status-content">
+        <h3>Error</h3>
+        <p>{{ err }}</p>
+      </div>
+    </div>
+  } @else if (u) {
+    <div class="profile-card">
+      <div class="profile-card-header">
+        <div class="profile-avatar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
           </svg>
         </div>
-        <h2>Authorization Endpoints</h2>
-      </div>
-      <div class="card-body">
-        <div class="endpoint-list">
-          <div class="endpoint-item">
-            <span class="endpoint-label">Authorize URI</span>
-            <code class="endpoint-url">{{ authorizeUri }}</code>
-          </div>
-          <div class="endpoint-item">
-            <span class="endpoint-label">Redirect URI</span>
-            <code class="endpoint-url">{{ redirectUri }}</code>
-          </div>
+        <div class="profile-info">
+          <h2>{{ u.name || u.username || 'User' }}</h2>
+          <p class="profile-email">{{ u.email }}</p>
+          <span class="profile-badge">Authenticated</span>
         </div>
       </div>
-    </div>
-
-    <div class="info-card reveal delay-4">
-      <div class="card-header">
-        <div class="card-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path
-              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
-            </path>
-          </svg>
+      <div class="profile-card-body">
+        <div class="profile-row">
+          <span class="profile-label">Username</span>
+          <span class="profile-value">{{ u.username }}</span>
         </div>
-        <h2>Configuration</h2>
-      </div>
-      <div class="card-body">
-        <div class="features-grid">
-          <div class="feature-item">
-            <h4>Client ID</h4>
-            <p>{{ clientId }}</p>
-          </div>
-          <div class="feature-item">
-            <h4>Scope</h4>
-            <p>{{ scope }}</p>
-          </div>
-          <div class="feature-item">
-            <h4>Response Type</h4>
-            <p>{{ responseType }}</p>
-          </div>
-          <div class="feature-item">
-            <h4>PKCE Method</h4>
-            <p>{{ codeChallengeMethod }}</p>
-          </div>
+        <div class="profile-row">
+          <span class="profile-label">User ID</span>
+          <span class="profile-value mono">{{ u.id }}</span>
         </div>
+        @if (u.surname1 || u.surname2) {
+          <div class="profile-row">
+            <span class="profile-label">Surname</span>
+            <span class="profile-value">{{ u.surname1 }}{{ u.surname2 ? ' ' + u.surname2 : '' }}</span>
+          </div>
+        }
+        @if (u.phone) {
+          <div class="profile-row">
+            <span class="profile-label">Phone</span>
+            <span class="profile-value">{{ u.phone }}</span>
+          </div>
+        }
+        @if (u.address) {
+          <div class="profile-row">
+            <span class="profile-label">Address</span>
+            <span class="profile-value">{{ u.address }}</span>
+          </div>
+        }
+        <div class="profile-row">
+          <span class="profile-label">Status</span>
+          <span class="profile-value">
+            @if (u.disabled) {
+              <span class="status-tag disabled-tag">Disabled</span>
+            } @else {
+              <span class="status-tag active-tag">Active</span>
+            }
+            @if (u.locked) {
+              <span class="status-tag locked-tag">Locked</span>
+            }
+          </span>
+        </div>
+        @if (u.roles) {
+          <div class="profile-row">
+            <span class="profile-label">Roles</span>
+            <span class="profile-value">
+              @for (role of u.roles; track $index) {
+                <span class="role-tag">{{ role }}</span>
+              }
+            </span>
+          </div>
+        }
+        @if (u.createdAt) {
+          <div class="profile-row">
+            <span class="profile-label">Created</span>
+            <span class="profile-value">{{ u.createdAt | date:'medium' }}</span>
+          </div>
+        }
       </div>
     </div>
-  </div>
-
-  @if(authService.isAuthenticated()){
-  <div class="d-flex align-items-stretch" id="viewer">
-    <div class="nav flex-column nav-pills me-3 gap-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-      <button class="action-button primary glow-pulse active" id="v-pills-home-tab" data-bs-toggle="pill"
-        data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home"
-        aria-selected="true">Users</button>
-      <button class="action-button primary glow-pulse" id="v-pills-profile-tab" data-bs-toggle="pill"
-        data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile"
-        aria-selected="false">Roles</button>
-      <button class="action-button primary glow-pulse" id="v-pills-messages-tab" data-bs-toggle="pill"
-        data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages"
-        aria-selected="false">Permissions</button>
-      <button class="action-button primary glow-pulse" id="v-pills-settings-tab" data-bs-toggle="pill"
-        data-bs-target="#v-pills-settings" type="button" role="tab" aria-controls="v-pills-settings"
-        aria-selected="false">Settings</button>
-    </div>
-    <div class="tab-content gap-3 tabs-main-panel" id="v-pills-tabContent">
-      <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
-        <app-users></app-users>
-      </div>
-      <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
-        <app-roles />
-      </div>
-      <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
-        <app-permissions />
-      </div>
-      <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">Settings
+  } @else {
+    <div class="status-card">
+      <div class="status-content">
+        <h3>Initializing...</h3>
+        <p>Setting up user session</p>
       </div>
     </div>
-  </div>
   }
+} @else {
+  <div class="welcome-card">
+    <div class="welcome-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+    </div>
+    <h2>Welcome to IoTizer</h2>
+    <p>Sign in to manage your IoT devices and view your profile</p>
+    <button class="login-button" (click)="login()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+        <polyline points="10 17 15 12 10 7"></polyline>
+        <line x1="15" y1="12" x2="3" y2="12"></line>
+      </svg>
+      Login with OAuth2
+    </button>
+  </div>
+}
 
-  <footer class="home-footer">
-    <p>IoTizer &mdash; IoT Manager by Vekstorm </p>
-  </footer>
-</div>
+<footer class="home-footer">
+  <p>IoTizer &mdash; IoT Manager by Vekstorm</p>
+</footer>

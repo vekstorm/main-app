@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/@openapitools/openapi-generator-cli/config.schema.json",
+  "spaces": 2,
+  "generator-cli": {
+    "version": "7.23.0",
+    "generators": {
+      "auth-api": {
+        "generatorName": "typescript-angular",
+        "inputSpec": "http://localhost:9000/api-docs",
+        "output": "src/app/generated/auth-api",
+        "additionalProperties": {
+          "providedInRoot": "true",
+          "fileNaming": "kebab-case",
+          "withInterfaces": "true",
+          "useSingleRequestParameter": "true",
+          "supportsES6": "true"
+        }
+      }
+    }
+  }
+}

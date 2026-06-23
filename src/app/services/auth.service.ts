@@ -12,6 +12,7 @@ export class AuthService {
   private router = inject(Router);
 
   private _isAuthenticated = signal<boolean>(this.hasValidToken());
+  readonly isAuthenticatedSignal = this._isAuthenticated.asReadonly();
   private _hasAuthority = signal<boolean>(false);
 
   isAuthenticated() {
@@ -130,6 +131,14 @@ export class AuthService {
     } else {
       window.location.href = '/';
     }
+  }
+
+  getUserId(): string | null {
+    const token = this.getAccessToken();
+    if (!token) return null;
+    const parsed = this.parseJwt(token);
+    if (!parsed) return null;
+    return (parsed['user_id'] ?? parsed['sub'] ?? null) as string | null;
   }
 
   parseClaims(claims: Record<string, unknown>) {

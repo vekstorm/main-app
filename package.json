@@ -6,7 +6,11 @@
     "start": "ng serve --port 4201",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "generate:client": "openapi-generator-cli generate --generator-key auth-api",
+    "postgenerate:client": "node scripts/post-generate.mjs",
+    "generate:client:local": "openapi-generator-cli generate -g typescript-angular -i spec/openapi.json -o src/app/generated/auth-api --additional-properties=providedInRoot=true,fileNaming=kebab-case,withInterfaces=true,useSingleRequestParameter=true,supportsES6=true",
+    "download:spec": "node -e \"const fs=require('fs');const h='http';require(h).get('http://localhost:9000/api-docs',r=>{let d='';r.on('data',c=>d+=c);r.on('end',()=>{fs.mkdirSync('spec',{recursive:true});fs.writeFileSync('spec/openapi.json',d);console.log('Downloaded spec to spec/openapi.json')})})\""
   },
   "private": true,
   "packageManager": "npm@11.16.0",
@@ -30,6 +34,7 @@
     "@angular/cli": "^22.0.2",
     "@angular/compiler-cli": "^22.0.0",
     "@capacitor/cli": "^8.4.0",
+    "@openapitools/openapi-generator-cli": "^2.39.0",
     "@types/bootstrap": "^5.2.11",
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",

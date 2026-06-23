@@ -1,19 +1,23 @@
-import { Component, inject } from '@angular/core';
+import { Component, signal, inject, effect } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { APP_CONFIG } from '../../core/app-config.token';
 import { generateCodeVerifier, generateCodeChallenge, storeCodeVerifier } from '../../core/pkce';
-import { Users } from '../users/users';
-import { Roles } from '../roles/roles';
-import { Permissions } from '../permissions/permissions';
 import { AuthService } from '../../services/auth.service';
+import { UserControllerService } from '../../services/user-controller.service';
+import { GetByIdRequestParams } from '../../services/user-controller.serviceInterface';
+import { AppUserResponseDto } from '../../services/dtos/app-user-response-dto';
 
 @Component({
   selector: 'app-home',
-  imports: [Users, Roles, Permissions],
+  imports: [DatePipe],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
 export class Home {
   private config = inject(APP_CONFIG);
+  private userService = inject(UserControllerService);
+  private sub?: Subscription;
   authService = inject(AuthService);
 
   authorizeUri = this.config.authorizeUri?.replace('?', '');
@@ -22,6 +26,43 @@ export class Home {
   scope = this.config.scope;
   responseType = this.config.responseType;
   codeChallengeMethod = this.config.codeChallengeMethod;
+
+  user = signal<AppUserResponseDto | null>(null);
+  loading = signal(false);
+  error = signal<string | null>(null);
+
+  constructor() {
+    effect(() => {
+      if (this.authService.isAuthenticatedSignal()) {
+        this.loadUser();
+      } else {
+        this.user.set(null);
+        this.loading.set(false);
+        this.error.set(null);
+      }
+    });
+  }
+
+  private loadUser(): void {
+    const userId = this.authService.getUserId();
+    if (!userId) return;
+
+    this.loading.set(true);
+    this.error.set(null);
+    this.sub?.unsubscribe();
+
+    const params: GetByIdRequestParams = { id: userId };
+    this.sub = this.userService.getById(params).subscribe({
+      next: (u) => {
+        this.user.set(u);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(err?.message ?? 'Error loading user');
+        this.loading.set(false);
+      },
+    });
+  }
 
   async login(): Promise<void> {
     const codeVerifier = generateCodeVerifier();
