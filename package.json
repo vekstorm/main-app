@@ -39,6 +39,8 @@
     "@capacitor/cli": "^8.4.0",
     "@openapitools/openapi-generator-cli": "^2.39.0",
     "@types/bootstrap": "^5.2.11",
+    "@types/w3c-web-serial": "^1.0.8",
+    "@types/web-bluetooth": "^0.0.21",
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
