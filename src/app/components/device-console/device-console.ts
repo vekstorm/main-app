@@ -2,15 +2,19 @@ import { Component, inject, signal, ViewChild, ElementRef, OnDestroy } from '@an
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PlatformService } from '../../core/platform.service';
+import { FlasherComponent } from './components/flasher-component/flasher-component';
+import { AddDeviceComponent } from './components/add-device-component/add-device-component';
 
 @Component({
   selector: 'app-device-console',
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, FlasherComponent, AddDeviceComponent],
   templateUrl: './device-console.html',
   styleUrl: './device-console.scss',
 })
 export class DeviceConsole implements OnDestroy {
   private platform = inject(PlatformService);
+
+  acquirePort = () => this.releaseSerialStreams();
 
   @ViewChild('terminalOutput', { static: false })
   private terminalOutputRef?: ElementRef<HTMLElement>;
@@ -29,6 +33,7 @@ export class DeviceConsole implements OnDestroy {
   command = signal('');
   receivedData = signal<string[]>([]);
   statusMessage = signal('');
+  activePanel = signal<'flasher' | 'add-device' | null>(null);
 
   /* --- Bluetooth state --- */
   private server: BluetoothRemoteGATTServer | undefined | null = null;
@@ -36,10 +41,11 @@ export class DeviceConsole implements OnDestroy {
   private rxCharacteristic: BluetoothRemoteGATTCharacteristic | null = null;
 
   /* --- Serial state --- */
-  private port: SerialPort | null = null;
+  protected port: SerialPort | null = null;
   private serialReader: ReadableStreamDefaultReader<Uint8Array> | null = null;
   private serialWriter: WritableStreamDefaultWriter<Uint8Array> | null = null;
   private serialBuffer = '';
+  private reopening = false;
 
   private readonly SERVICE_UUID = '0000ffe0-0000-1000-8000-00805f9b34fb';
   private readonly TX_CHAR_UUID = '0000ffe1-0000-1000-8000-00805f9b34fb';
@@ -51,7 +57,7 @@ export class DeviceConsole implements OnDestroy {
 
   async onBluetooth(): Promise<void> {
     if (!this.hasWebBluetooth) {
-      this.appendLine('[ERROR] Web Bluetooth no disponible en este navegador.');
+      this.appendLine('[ERROR] Web Bluetooth not available in this browser.');
       return;
     }
 
@@ -65,11 +71,11 @@ export class DeviceConsole implements OnDestroy {
         optionalServices: [this.SERVICE_UUID],
       });
 
-      this.deviceName.set(device.name ?? 'Dispositivo desconocido');
+      this.deviceName.set(device.name ?? 'Unknown device');
       device.addEventListener('gattserverdisconnected', () => this.onBtDisconnected());
 
       this.server = device.gatt;
-      if (!this.server) throw new Error('GATT server no disponible');
+      if (!this.server) throw new Error('GATT server not available');
 
       await this.server.connect();
 
@@ -95,10 +101,10 @@ export class DeviceConsole implements OnDestroy {
       this.connectionType.set('bluetooth');
       this.connected.set(true);
       this.terminalVisible.set(true);
-      this.appendLine(`[CONECTADO] ${this.deviceName()}`);
+      this.appendLine(`[CONNECTED] ${this.deviceName()}`);
     } catch (err: any) {
-      this.statusMessage.set(`Error: ${err.message ?? 'Error al conectar'}`);
-      this.appendLine(`[ERROR] ${err.message ?? 'Error al conectar'}`);
+      this.statusMessage.set(`Error: ${err.message ?? 'Connection failed'}`);
+      this.appendLine(`[ERROR] ${err.message ?? 'Connection failed'}`);
     } finally {
       this.connecting.set(false);
     }
@@ -110,8 +116,8 @@ export class DeviceConsole implements OnDestroy {
 
   async onSerial(): Promise<void> {
     if (!this.hasWebSerial) {
-      this.statusMessage.set('Web Serial no disponible en este navegador.');
-      this.appendLine('[ERROR] Web Serial no disponible en este navegador.');
+      this.statusMessage.set('Web Serial not available in this browser.');
+      this.appendLine('[ERROR] Web Serial not available in this browser.');
       return;
     }
 
@@ -126,8 +132,8 @@ export class DeviceConsole implements OnDestroy {
 
       const info = port.getInfo();
       const label = info.usbProductId
-        ? `Serie (${info.usbVendorId?.toString(16)}:${info.usbProductId.toString(16)})`
-        : 'Puerto serie';
+        ? `Serial (${info.usbVendorId?.toString(16)}:${info.usbProductId.toString(16)})`
+        : 'Serial port';
       this.deviceName.set(label);
 
       this.port = port;
@@ -138,10 +144,10 @@ export class DeviceConsole implements OnDestroy {
       this.connectionType.set('serial');
       this.connected.set(true);
       this.terminalVisible.set(true);
-      this.appendLine(`[CONECTADO] ${this.deviceName()}`);
+      this.appendLine(`[CONNECTED] ${this.deviceName()}`);
     } catch (err: any) {
-      this.statusMessage.set(`Error: ${err.message ?? 'Error al conectar puerto serie'}`);
-      this.appendLine(`[ERROR] ${err.message ?? 'Error al conectar puerto serie'}`);
+      this.statusMessage.set(`Error: ${err.message ?? 'Failed to connect to serial port'}`);
+      this.appendLine(`[ERROR] ${err.message ?? 'Failed to connect to serial port'}`);
     } finally {
       this.connecting.set(false);
     }
@@ -151,8 +157,9 @@ export class DeviceConsole implements OnDestroy {
     try {
       const decoder = new TextDecoder();
       while (this.serialReader) {
-        const { value, done } = await this.serialReader.read();
-        if (done) break;
+        const result = await this.serialReader.read();
+        if (result.done) break;
+        const value = result.value;
         if (value) {
           this.serialBuffer += decoder.decode(value, { stream: true });
           const lines = this.serialBuffer.split('\n');
@@ -163,7 +170,7 @@ export class DeviceConsole implements OnDestroy {
         }
       }
     } catch {
-      /* reader stream closed */
+      /* stream released */
     }
   }
 
@@ -189,11 +196,12 @@ export class DeviceConsole implements OnDestroy {
       this.appendLine(`> ${cmd}`);
       this.command.set('');
     } catch (err: any) {
-      this.appendLine(`[ERROR] ${err.message ?? 'Error al enviar'}`);
+      this.appendLine(`[ERROR] ${err.message ?? 'Send failed'}`);
     }
   }
 
   async disconnect(): Promise<void> {
+    this.activePanel.set(null);
     switch (this.connectionType()) {
       case 'bluetooth':
         await this.disconnectBluetooth();
@@ -203,7 +211,7 @@ export class DeviceConsole implements OnDestroy {
         break;
     }
     this.statusMessage.set('');
-    this.appendLine('[DESCONECTADO]');
+    this.appendLine('[DISCONNECTED]');
   }
 
   /* ---------- internal disconnect helpers ---------- */
@@ -220,22 +228,62 @@ export class DeviceConsole implements OnDestroy {
     this.cleanupConnection();
   }
 
-  private async disconnectSerial(): Promise<void> {
-    try { await this.serialReader?.cancel(); } catch { }
-    try { await this.serialWriter?.close(); } catch { }
-    try {
-      await new Promise(r => setTimeout(r, 50));
-      if (this.port) {
-        await this.port.close();
-      }
-    } catch { }
+  private async disconnectSerial(keepPortRef = false): Promise<void> {
+    await this.releaseSerialStreams(true);
     this.cleanupConnection();
+    if (!keepPortRef) {
+      this.port = null;
+    }
+  }
+
+  /**
+   * Release locks on the serial reader/writer.
+   * If closePort is true (full disconnect), also close the port.
+   * If false (flasher acquiring port), keep the port open.
+   */
+  private async releaseSerialStreams(closePort = false): Promise<void> {
+    const reader = this.serialReader;
+    const writer = this.serialWriter;
+    this.serialReader = null;
+    this.serialWriter = null;
+    this.serialBuffer = '';
+    try { reader?.releaseLock(); } catch { }
+    if (writer) {
+      try { writer.releaseLock(); } catch { }
+    }
+    if (closePort && this.port) {
+      try {
+        await this.port.close();
+      } catch { }
+    }
+  }
+
+  /**
+   * Reopen the serial port and restore terminal streams after the flasher
+   * has released it. Called via setTimeout to ensure it runs after the
+   * flasher component's ngOnDestroy.
+   */
+  private async restoreSerialForTerminal(): Promise<void> {
+    if (!this.port || this.reopening) return;
+    this.reopening = true;
+    try {
+      this.serialReader = this.port.readable!.getReader();
+      this.serialWriter = this.port.writable!.getWriter();
+      this.readSerialLoop();
+      this.appendLine('[INFO] Serial terminal restored.');
+    } catch (err: any) {
+      this.port = null;
+      this.cleanupConnection();
+      this.statusMessage.set('Failed to restore terminal. Reconnect the serial port.');
+    } finally {
+      this.reopening = false;
+    }
   }
 
   private onBtDisconnected(): void {
     this.cleanupConnection();
-    this.statusMessage.set('El dispositivo Bluetooth se ha desconectado.');
-    this.appendLine('[DESCONECTADO] El dispositivo se ha desconectado.');
+    this.statusMessage.set('The Bluetooth device disconnected.');
+    this.appendLine('[DISCONNECTED] The Bluetooth device disconnected.');
   }
 
   private cleanupConnection(): void {
@@ -243,13 +291,9 @@ export class DeviceConsole implements OnDestroy {
     this.connecting.set(false);
     this.terminalVisible.set(false);
     this.connectionType.set(null);
-    this.serialBuffer = '';
     this.server = null;
     this.txCharacteristic = null;
     this.rxCharacteristic = null;
-    this.port = null;
-    this.serialReader = null;
-    this.serialWriter = null;
   }
 
   /* ================================================================
@@ -260,6 +304,7 @@ export class DeviceConsole implements OnDestroy {
     if (this.connected()) {
       this.disconnect();
     }
+    this.port = null;
   }
 
   /* ---------- helpers ---------- */
@@ -270,6 +315,25 @@ export class DeviceConsole implements OnDestroy {
 
   toggleTerminal(): void {
     this.terminalVisible.update(v => !v);
+  }
+
+  showPanel(panel: 'flasher' | 'add-device'): void {
+    if (this.activePanel() === panel) {
+      this.closeActivePanel();
+      return;
+    }
+    if (this.activePanel() === 'flasher') {
+      this.closeActivePanel();
+    }
+    this.activePanel.set(panel);
+  }
+
+  onDoneWithPort(): void {
+    setTimeout(() => this.restoreSerialForTerminal(), 50);
+  }
+
+  private closeActivePanel(): void {
+    this.activePanel.set(null);
   }
 
   private appendLine(line: string): void {

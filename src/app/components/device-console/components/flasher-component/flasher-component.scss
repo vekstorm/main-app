@@ -1,0 +1,460 @@
+:host {
+  display: block;
+}
+
+.flasher {
+  padding: 20px 24px;
+}
+
+.flasher__title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: #000;
+}
+
+.flasher__desc {
+  font-size: 13px;
+  color: #888;
+  margin: 0 0 18px;
+}
+
+/* ================================================================
+ *  DOWNLOAD MODE INDICATOR
+ * ================================================================ */
+
+.flasher__download-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  animation: fade-in 0.3s ease-out;
+  transition: background 0.25s, border-color 0.25s;
+}
+
+.flasher__download-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+.flasher__download-status--checking {
+  background: #f0f4ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+
+  .flasher__download-dot {
+    background: #3b82f6;
+  }
+}
+
+.flasher__download-status--ready {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+
+  .flasher__download-dot {
+    background: #22c55e;
+    animation: none;
+  }
+}
+
+.flasher__download-status--not-ready {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+
+  .flasher__download-dot {
+    background: #ef4444;
+    animation: none;
+  }
+}
+
+.flasher__download-label {
+  flex: 1;
+}
+
+.flasher__download-retry {
+  padding: 4px 12px;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  color: inherit;
+  transition: background 0.2s;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.06);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+/* ================================================================
+ *  DOWNLOAD MODE INSTRUCTIONS CARD
+ * ================================================================ */
+
+.flasher__instructions {
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  background: #fffaf0;
+  border: 1px solid #fde68a;
+  animation: fade-in 0.35s ease-out;
+}
+
+.flasher__instructions-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #92400e;
+  margin-bottom: 8px;
+}
+
+.flasher__instructions-steps {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: #78350f;
+  line-height: 1.7;
+}
+
+/* ================================================================
+ *  ADDRESS ROW
+ * ================================================================ */
+
+.flasher__address-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: #f3f4f6;
+  border-radius: 6px;
+}
+
+.flasher__address-label {
+  font-size: 14px;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.flasher__address-input {
+  width: 140px;
+  padding: 6px 10px;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  outline: none;
+  background: #fff;
+  color: #111827;
+  text-align: center;
+  transition: border-color 0.15s;
+
+  &:focus {
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.15);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.flasher__toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.flasher__toggle-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.flasher__toggle-body {
+  position: relative;
+  width: 38px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.flasher__toggle-input {
+  display: none;
+}
+
+.flasher__toggle-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background: #ccc;
+  transition: background 0.25s;
+}
+
+.flasher__toggle-input:checked + .flasher__toggle-track {
+  background: #f59e0b;
+}
+
+.flasher__toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.25s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+}
+
+.flasher__toggle-input:checked + .flasher__toggle-track .flasher__toggle-thumb {
+  transform: translateX(18px);
+}
+
+/* ================================================================
+ *  FILE INPUT  — custom drop zone
+ * ================================================================ */
+
+.flasher__file-hidden {
+  display: none;
+}
+
+.flasher__file-zone {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border: 2px dashed #d0d0d0;
+  border-radius: 12px;
+  background: #fafafa;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  margin-bottom: 14px;
+
+  &:hover {
+    border-color: #f59e0b;
+    background: #fffcf5;
+  }
+
+  &--has-file {
+    border-style: solid;
+    border-color: #f59e0b;
+    background: #fffcf5;
+  }
+}
+
+.flasher__file-icon {
+  flex-shrink: 0;
+  color: #aaa;
+  transition: color 0.2s;
+}
+
+.flasher__file-zone:hover .flasher__file-icon {
+  color: #f59e0b;
+}
+
+.flasher__file-placeholder {
+  font-size: 13px;
+  color: #999;
+}
+
+.flasher__file-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.flasher__file-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flasher__file-size {
+  font-size: 11px;
+  color: #999;
+}
+
+.flasher__file-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #bbb;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  flex-shrink: 0;
+
+  &:hover {
+    background: #fee2e2;
+    color: #dc3545;
+  }
+}
+
+/* ================================================================
+ *  DEFAULT FIRMWARE MESSAGE
+ * ================================================================ */
+
+.flasher__default-msg {
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: #fffcf5;
+  border: 1px solid #fde68a;
+  font-size: 13px;
+  color: #92400e;
+  margin-bottom: 14px;
+}
+
+/* ================================================================
+ *  VALIDATION ERROR
+ * ================================================================ */
+
+.flasher__error {
+  font-size: 12px;
+  color: #dc3545;
+  margin-bottom: 8px;
+  animation: fade-in 0.25s ease-out;
+}
+
+/* ================================================================
+ *  SUCCESS CARD
+ * ================================================================ */
+
+.flasher__success {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #166534;
+  animation: fade-in 0.35s ease-out;
+}
+
+.flasher__success-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #22c55e;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.flasher__success-text {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.flasher__success-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #166534;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.08);
+  }
+}
+
+/* ================================================================
+ *  STATUS & BUTTON
+ * ================================================================ */
+
+.flasher__status {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 12px;
+  min-height: 1.2em;
+}
+
+.flasher__btn {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  overflow: hidden;
+  text-align: center;
+  background: #f59e0b;
+  color: #000;
+  transition: background 0.2s;
+
+  &:hover:not(:disabled) {
+    background: #d97706;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.flasher__btn-fill {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.15);
+  transition: width 0.3s ease-out;
+  z-index: 0;
+}
+
+.flasher__btn-label {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}

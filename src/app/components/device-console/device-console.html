@@ -5,11 +5,11 @@
       <line x1="19" y1="12" x2="5" y2="12"></line>
       <polyline points="12 19 5 12 12 5"></polyline>
     </svg>
-    Volver
+    Back
   </a>
 
-  <h2 class="console-title">Consola de dispositivo</h2>
-  <p class="console-subtitle">Selecciona el método de conexión para comunicarte con el dispositivo</p>
+  <h2 class="console-title">Device Console</h2>
+  <p class="console-subtitle">Select a connection method to communicate with the device</p>
 
   @if (statusMessage()) {
     <div class="console-status">
@@ -36,7 +36,7 @@
               <line x1="8" y1="21" x2="16" y2="21"></line>
             </svg>
             <div>
-              <div class="console-card__label">Bluetooth conectado</div>
+              <div class="console-card__label">Bluetooth connected</div>
               <div class="console-card__desc">{{ deviceName() }}</div>
             </div>
           </div>
@@ -47,7 +47,7 @@
                 <polyline points="4 17 10 11 4 5"></polyline>
                 <line x1="12" y1="19" x2="20" y2="19"></line>
               </svg>
-              {{ terminalVisible() ? 'Cerrar terminal' : 'Abrir terminal' }}
+              {{ terminalVisible() ? 'Close terminal' : 'Open terminal' }}
             </button>
             <button class="console-card__btn console-card__btn--disconnect" (click)="disconnect()">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -56,7 +56,7 @@
                 <polyline points="16 17 21 12 16 7"></polyline>
                 <line x1="21" y1="12" x2="9" y2="12"></line>
               </svg>
-              Desconectar
+              Disconnect
             </button>
           </div>
         </div>
@@ -71,12 +71,12 @@
             <line x1="8" y1="21" x2="16" y2="21"></line>
           </svg>
           <span>
-            <span class="console-btn__label">Conexión Bluetooth</span>
+            <span class="console-btn__label">Bluetooth Connection</span>
             <span class="console-btn__desc">
               @if (!hasWebBluetooth && isWeb) {
-                Web Bluetooth no soportado
+                Web Bluetooth not supported
               } @else {
-                Comunicación inalámbrica con dispositivos cercanos
+                Wireless communication with nearby devices
               }
             </span>
           </span>
@@ -98,8 +98,29 @@
               <line x1="4" y1="4" x2="9" y2="9"></line>
             </svg>
             <div>
-              <div class="console-card__label">Puerto serie conectado</div>
+              <div class="console-card__label">Serial port connected</div>
               <div class="console-card__desc">{{ deviceName() }}</div>
+            </div>
+            <div class="console-card__header-actions">
+              <button class="console-card__header-btn console-card__header-btn--flash"
+                [class.console-card__header-btn--active]="activePanel() === 'flasher'"
+                (click)="showPanel('flasher')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+                Flashear
+              </button>
+              <button class="console-card__header-btn console-card__header-btn--add"
+                [class.console-card__header-btn--active]="activePanel() === 'add-device'"
+                (click)="showPanel('add-device')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Add device
+              </button>
             </div>
           </div>
           <div class="console-card__actions">
@@ -109,7 +130,7 @@
                 <polyline points="4 17 10 11 4 5"></polyline>
                 <line x1="12" y1="19" x2="20" y2="19"></line>
               </svg>
-              {{ terminalVisible() ? 'Cerrar terminal' : 'Abrir terminal' }}
+              {{ terminalVisible() ? 'Close terminal' : 'Open terminal' }}
             </button>
             <button class="console-card__btn console-card__btn--disconnect" (click)="disconnect()">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -118,7 +139,7 @@
                 <polyline points="16 17 21 12 16 7"></polyline>
                 <line x1="21" y1="12" x2="9" y2="12"></line>
               </svg>
-              Desconectar
+              Disconnect
             </button>
           </div>
         </div>
@@ -135,16 +156,26 @@
             <line x1="4" y1="4" x2="9" y2="9"></line>
           </svg>
           <span>
-            <span class="console-btn__label">Conexión por Puerto Serie</span>
+            <span class="console-btn__label">Serial Port Connection</span>
             <span class="console-btn__desc">
               @if (!hasWebSerial && isWeb) {
-                Web Serial no soportado
+                Web Serial not supported
               } @else {
-                Comunicación por cable USB / UART
+                Wired communication via USB / UART
               }
             </span>
           </span>
         </button>
+      }
+
+      @if (activePanel()) {
+        <div class="console-panel" [class.console-panel--attached]="connected() && connectionType() === 'serial'">
+          @if (activePanel() === 'flasher') {
+            <app-flasher [port]="port!" [acquirePort]="acquirePort" (doneWithPort)="onDoneWithPort()" />
+          } @else {
+            <app-add-device />
+          }
+        </div>
       }
     }
   </div>
@@ -161,9 +192,9 @@
         <line x1="12" y1="19" x2="20" y2="19"></line>
       </svg>
       @if (connectionType() === 'bluetooth') {
-        Terminal Bluetooth — {{ deviceName() }}
+        Bluetooth Terminal — {{ deviceName() }}
       } @else {
-        Terminal Serie — {{ deviceName() }}
+        Serial Terminal — {{ deviceName() }}
       }
       <label class="terminal-autoscroll" title="Auto-scroll">
         <span class="terminal-autoscroll__label">Auto</span>
@@ -173,7 +204,7 @@
           <span class="terminal-autoscroll__thumb"></span>
         </span>
       </label>
-      <button class="terminal-close" (click)="toggleTerminal()" title="Cerrar terminal">
+      <button class="terminal-close" (click)="toggleTerminal()" title="Close terminal">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -187,8 +218,8 @@
         <div class="terminal-line"
           [class.terminal-line--error]="line.startsWith('[ERROR]')"
           [class.terminal-line--info]="line.startsWith('[INFO]')"
-          [class.terminal-line--connected]="line.startsWith('[CONECTADO]')"
-          [class.terminal-line--disconnected]="line.startsWith('[DESCONECTADO]')"
+          [class.terminal-line--connected]="line.startsWith('[CONNECTED]')"
+          [class.terminal-line--disconnected]="line.startsWith('[DISCONNECTED]')"
           [class.terminal-line--sent]="line.startsWith('>')">
           {{ line }}
         </div>
@@ -199,7 +230,7 @@
       <input
         class="terminal-input"
         type="text"
-        placeholder="Escribe un comando…"
+        placeholder="Type a command…"
         [(ngModel)]="command"
         (keyup.enter)="sendCommand()" />
       <button class="terminal-send" (click)="sendCommand()" [disabled]="!command().trim()">

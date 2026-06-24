@@ -1,0 +1,28 @@
+:host {
+  display: block;
+}
+
+.add-device {
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.add-device__icon {
+  font-size: 36px;
+  font-weight: 300;
+  color: #bbb;
+  margin: 0 0 8px;
+}
+
+.add-device__title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #000;
+  margin: 0 0 4px;
+}
+
+.add-device__desc {
+  font-size: 13px;
+  color: #888;
+  margin: 0;
+}

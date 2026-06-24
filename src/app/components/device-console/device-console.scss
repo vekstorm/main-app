@@ -171,6 +171,60 @@
   }
 }
 
+.console-card__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.console-card__header-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1.5px solid transparent;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  background: #f5f5f5;
+  color: #555;
+}
+
+.console-card__header-btn--flash {
+  &:hover {
+    border-color: #7c3aed;
+    background: #f5f0ff;
+    color: #7c3aed;
+  }
+}
+
+.console-card__header-btn--add {
+  &:hover {
+    border-color: #0d9488;
+    background: #f0fdfa;
+    color: #0d9488;
+  }
+}
+
+.console-card__header-btn--active {
+  &.console-card__header-btn--flash {
+    border-color: #7c3aed;
+    background: #f5f0ff;
+    color: #7c3aed;
+  }
+
+  &.console-card__header-btn--add {
+    border-color: #0d9488;
+    background: #f0fdfa;
+    color: #0d9488;
+  }
+}
+
 .console-card__label {
   font-size: 16px;
   font-weight: 600;
@@ -201,6 +255,7 @@
   font-family: inherit;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
 
   &:not(:last-child) {
     border-right: 1px solid #e0e0e0;
@@ -243,6 +298,22 @@
 }
 
 /* ================================================================
+ *  DYNAMIC PANEL  (below cards)
+ * ================================================================ */
+
+.console-panel {
+  border: 2px solid #e0e0e0;
+  border-radius: 16px;
+  background: #fff;
+  animation: fade-in 0.3s ease-out;
+
+  &--attached {
+    border-top: none;
+    border-radius: 0 0 16px 16px;
+  }
+}
+
+/* ================================================================
  *  TERMINAL  (common)
  * ================================================================ */
 
@@ -254,12 +325,12 @@
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  max-height: 40vh;
+  height: 32vh;
   animation: slide-up 0.35s ease-out;
 }
 
 .console-container--terminal-open {
-  padding-bottom: 42vh;
+  padding-bottom: 34vh;
 }
 
 .terminal-header {
@@ -386,11 +457,11 @@
 
 .terminal {
   @media (max-width: 600px) {
-    max-height: 30vh;
+    height: 24vh;
   }
 
   @media (max-width: 400px) {
-    max-height: 25vh;
+    height: 20vh;
   }
 }
 

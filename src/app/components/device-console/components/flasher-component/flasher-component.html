@@ -1,0 +1,163 @@
+<div class="flasher">
+  <p class="flasher__title">Flash base firmware</p>
+  <p class="flasher__desc">Select a .bin file or use the default firmware.</p>
+
+  <label class="flasher__address-row">
+    <span class="flasher__address-label">Flash address</span>
+    <input class="flasher__address-input" type="text"
+      [disabled]="flashing()"
+      [value]="addressFlash()"
+      (change)="addressFlash.set($any($event.target).value)"
+      placeholder="0x10000" />
+  </label>
+
+  <!-- Download Mode Indicator -->
+  <div class="flasher__download-status"
+    [class.flasher__download-status--checking]="downloadModeStatus() === 'checking'"
+    [class.flasher__download-status--ready]="downloadModeStatus() === 'ready'"
+    [class.flasher__download-status--not-ready]="downloadModeStatus() === 'not-ready'">
+    <span class="flasher__download-dot"></span>
+    <span class="flasher__download-label">
+      @switch (downloadModeStatus()) {
+        @case ('checking') { Checking download mode… }
+        @case ('ready') { ESP32 in download mode }
+        @case ('not-ready') { ESP32 not in download mode }
+      }
+    </span>
+    @if (downloadModeStatus() !== 'checking') {
+      <button class="flasher__download-retry" (click)="checkAgain()" [disabled]="flashing()">
+        Check again
+      </button>
+    }
+  </div>
+
+  <!-- Instructions card (only shown when not-ready) -->
+  @if (downloadModeStatus() === 'not-ready') {
+    <div class="flasher__instructions">
+      <div class="flasher__instructions-title">How to enter download mode</div>
+      <ol class="flasher__instructions-steps">
+        <li>Connect GPIO0 to GND (or press the BOOT/FLASH button)</li>
+        <li>Press the RESET/EN button</li>
+        <li>Release GPIO0 (or release the BOOT/FLASH button)</li>
+        <li>Click <strong>Check again</strong> above</li>
+      </ol>
+    </div>
+  }
+
+  <label class="flasher__toggle">
+    <span class="flasher__toggle-label">Use default firmware</span>
+    <span class="flasher__toggle-body">
+      <input type="checkbox" class="flasher__toggle-input"
+        [disabled]="flashing()"
+        [checked]="useDefaultFirmware()"
+        (change)="useDefaultFirmware.set(!useDefaultFirmware())" />
+      <span class="flasher__toggle-track">
+        <span class="flasher__toggle-thumb"></span>
+      </span>
+    </span>
+  </label>
+
+  <label class="flasher__toggle">
+    <span class="flasher__toggle-label">Erase all flash (danger: wipes bootloader)</span>
+    <span class="flasher__toggle-body">
+      <input type="checkbox" class="flasher__toggle-input"
+        [disabled]="flashing()"
+        [checked]="eraseAllFlash()"
+        (change)="eraseAllFlash.set(!eraseAllFlash())" />
+      <span class="flasher__toggle-track">
+        <span class="flasher__toggle-thumb"></span>
+      </span>
+    </span>
+  </label>
+
+  <label class="flasher__toggle">
+    <span class="flasher__toggle-label">Compression (recommended)</span>
+    <span class="flasher__toggle-body">
+      <input type="checkbox" class="flasher__toggle-input"
+        [disabled]="flashing()"
+        [checked]="compressFirmware()"
+        (change)="compressFirmware.set(!compressFirmware())" />
+      <span class="flasher__toggle-track">
+        <span class="flasher__toggle-thumb"></span>
+      </span>
+    </span>
+  </label>
+
+  @if (!useDefaultFirmware()) {
+    <div class="flasher__file-zone"
+      [class.flasher__file-zone--has-file]="!!binFile()"
+      (click)="fileInput.click()">
+      <svg class="flasher__file-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="17 8 12 3 7 8"/>
+        <line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+      @if (binFile(); as file) {
+        <div class="flasher__file-info">
+          <span class="flasher__file-name">{{ file.name }}</span>
+          <span class="flasher__file-size">{{ (file.size / 1024).toFixed(1) }} KB</span>
+        </div>
+        <button class="flasher__file-clear" (click)="binFile.set(null); $event.stopPropagation()" title="Remove file">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      } @else {
+        <span class="flasher__file-placeholder">
+          Click to select a .bin file
+        </span>
+      }
+    </div>
+    <input #fileInput
+      class="flasher__file-hidden"
+      type="file"
+      accept=".bin"
+      (change)="onFileSelected($event)"
+      [disabled]="flashing()" />
+  } @else {
+    <div class="flasher__default-msg">
+      The default base firmware will be flashed.
+    </div>
+  }
+
+  @if (validationError()) {
+    <div class="flasher__error">{{ validationError() }}</div>
+  }
+
+  @if (showSuccess()) {
+    <div class="flasher__success">
+      <span class="flasher__success-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6L9 17l-5-5"></path>
+        </svg>
+      </span>
+      <span class="flasher__success-text">Flash completed successfully!</span>
+      <button class="flasher__success-close" (click)="dismissSuccess()" title="Dismiss">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  }
+
+  <div class="flasher__status">{{ statusMsg() }}</div>
+
+  <button
+    class="flasher__btn"
+    [class.flasher__btn--busy]="flashing()"
+    [disabled]="!canFlash"
+    (click)="startFlash()">
+    <span class="flasher__btn-fill" [style.width.%]="progress()"></span>
+    <span class="flasher__btn-label">
+      @if (!flashing()) {
+        Flash
+      } @else {
+        {{ progress() }}%
+      }
+    </span>
+  </button>
+</div>
