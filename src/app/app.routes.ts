@@ -10,6 +10,10 @@ export const routes: Routes = [
     loadComponent: () => import("./components/devices/devices").then((m) => m.Devices)
   },
   {
+    path: 'device-console',
+    loadComponent: () => import("./components/device-console/device-console").then((m) => m.DeviceConsole)
+  },
+  {
     path: 'subscription',
     loadComponent: () => import("./components/subscription/subscription").then((m) => m.SubscriptionComponent)
   },

@@ -51,6 +51,17 @@
   border: 2px solid #000;
 }
 
+.devices-btn--add {
+  background: #fff;
+  color: #0d6efd;
+  border: 2px solid #0d6efd;
+}
+
+.devices-btn--add:hover {
+  background: #0d6efd;
+  color: #fff;
+}
+
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }

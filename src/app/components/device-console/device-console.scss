@@ -1,0 +1,112 @@
+:host {
+  display: block;
+}
+
+.console-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 48px 20px;
+  animation: fade-in 0.8s ease-out;
+}
+
+.console-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  text-decoration: none;
+  margin-bottom: 32px;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #000;
+  }
+}
+
+.console-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: #000;
+}
+
+.console-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 40px;
+}
+
+.console-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.console-btn {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 28px;
+  border: 2px solid #e0e0e0;
+  border-radius: 16px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  text-align: left;
+  font-family: inherit;
+  width: 100%;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.console-btn--bluetooth {
+  &:hover {
+    border-color: #0d6efd;
+    background: #f0f6ff;
+  }
+
+  svg {
+    color: #0d6efd;
+    flex-shrink: 0;
+  }
+}
+
+.console-btn--serial {
+  &:hover {
+    border-color: #198754;
+    background: #f0faf4;
+  }
+
+  svg {
+    color: #198754;
+    flex-shrink: 0;
+  }
+}
+
+.console-btn__label {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 4px;
+}
+
+.console-btn__desc {
+  display: block;
+  font-size: 13px;
+  color: #888;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
